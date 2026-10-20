@@ -105,27 +105,3 @@ Open `http://localhost:3000/docs` after starting the server. Use **Try it out** 
 
 The `stages/` folder contains incremental learning snapshots. The final integrated implementation is `app.js`.
 
-## Publish to GitHub
-
-Create a **public** repository on GitHub, then run these commands from this folder (replace the URL with your own repository URL):
-
-```bash
-git init
-git add .
-git commit -m "Stage 0: hello server"
-git add .
-git commit -m "Stage 1: root and health endpoints"
-git add .
-git commit -m "Stage 2: read endpoints with 404"
-git add .
-git commit -m "Stage 3: create with validation"
-git add .
-git commit -m "Stage 4: full CRUD"
-git add .
-git commit -m "Stage 5: Swagger UI"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
-git push -u origin main
-```
-
-For a genuine one-commit-per-stage history, make and commit each stage's code changes as you build it instead of creating all commits at the end.
