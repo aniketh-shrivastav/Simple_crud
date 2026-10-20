@@ -91,7 +91,7 @@ curl -i http://localhost:3000/tasks/99
 
 Open `http://localhost:3000/docs` after starting the server. Use **Try it out** to test the full CRUD cycle.
 
-`![Swagger UI screenshot](./docs/swagger-screenshot.png)`
+![Swagger UI screenshot](./docs/swagger-screenshot.png)
 
 ## Assignment stages
 
