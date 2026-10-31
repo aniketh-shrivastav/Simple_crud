@@ -13,6 +13,12 @@ logs/
 coverage/
 dist/
 
+# SQLite databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
 # OS and editor metadata
 .DS_Store
 Thumbs.db

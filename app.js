@@ -1,13 +1,14 @@
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi.json");
+const db = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// In-memory data: tasks disappear when the server restarts.
+// In-memory data: fallback for subsequent stages.
 let tasks = [
   { id: 1, title: "Learn Express", done: false },
   { id: 2, title: "Build a CRUD API", done: false },
@@ -36,7 +37,13 @@ app.get("/health", (req, res) => {
 
 // Stage 2: read all tasks and one task.
 app.get("/tasks", (req, res) => {
-  res.status(200).json(tasks);
+  const rows = db.prepare("SELECT id, title, done FROM tasks").all();
+  const taskList = rows.map((task) => ({
+    id: task.id,
+    title: task.title,
+    done: Boolean(task.done)
+  }));
+  res.status(200).json(taskList);
 });
 
 app.get("/tasks/:id", (req, res) => {
