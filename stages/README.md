@@ -1,12 +1,14 @@
 # Incremental stage snapshots
 
-These files are learning snapshots, not separate production entry points. They demonstrate how the assignment grows stage by stage.
+All learning snapshots have been consolidated into `stages.js`. This file demonstrates how the assignment grows stage by stage:
 
-- `stage0.js`: hello server
-- `stage1.js`: root and health endpoints
-- `stage2.js`: list and single-task read endpoints
-- `stage3.js`: create endpoint with title validation
-- `stage4.js`: full CRUD routes
-- `stage5.js`: Swagger wiring example
+- `Stage 0`: hello server
+- `Stage 1`: root and health endpoints
+- `Stage 2`: list and single-task read endpoints
+- `Stage 3`: create endpoint with title validation
+- `Stage 4`: full CRUD routes
+- `Stage 5`: Swagger wiring example
 
-For a complete, runnable implementation with all routes and Swagger, use the root `app.js`. The Stage 5 snapshot is intentionally a wiring example and does not duplicate every CRUD route.
+You can run any specific stage snapshot with `STAGE=<0-5> node stages/stages.js`.
+
+For the complete, runnable production implementation with all routes, database persistence, and Swagger, use the root `app.js`.

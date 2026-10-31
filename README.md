@@ -103,5 +103,4 @@ Open `http://localhost:3000/docs` after starting the server. Use **Try it out** 
 - Stage 5: Add Swagger UI documentation.
 - Stage 6: Publish the repository and document it.
 
-The `stages/` folder contains incremental learning snapshots. The final integrated implementation is `app.js`.
-
+The `stages/stages.js` file consolidates all incremental learning snapshots. The final integrated implementation is `app.js`.
