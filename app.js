@@ -8,14 +8,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// In-memory data: fallback for subsequent stages.
-let tasks = [
-  { id: 1, title: "Learn Express", done: false },
-  { id: 2, title: "Build a CRUD API", done: false },
-  { id: 3, title: "Test with Swagger UI", done: true }
-];
-let nextId = 4;
-
 // Stage 1: API information and health check.
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -48,13 +40,13 @@ app.get("/tasks", (req, res) => {
 
 app.get("/tasks/:id", (req, res) => {
   const id = Number(req.params.id);
-  const task = tasks.find((item) => item.id === id);
+  const row = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
 
-  if (!task) {
-    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  if (!row) {
+    return res.status(404).json({ error: "Task not found" });
   }
 
-  return res.status(200).json(task);
+  return res.status(200).json({ id: row.id, title: row.title, done: Boolean(row.done) });
 });
 
 // Stage 3: create a task with validation.
@@ -65,23 +57,18 @@ app.post("/tasks", (req, res) => {
     return res.status(400).json({ error: "title is required and must be a non-empty string" });
   }
 
-  const task = {
-    id: nextId++,
-    title: title.trim(),
-    done: false
-  };
-
-  tasks.push(task);
-  return res.status(201).json(task);
+  const result = db.prepare("INSERT INTO tasks (title, done) VALUES (?, 0)").run(title.trim());
+  const task = db.prepare("SELECT * FROM tasks WHERE id = ?").get(result.lastInsertRowid);
+  return res.status(201).json({ id: task.id, title: task.title, done: Boolean(task.done) });
 });
 
 // Stage 4: update a task and delete a task.
 app.put("/tasks/:id", (req, res) => {
   const id = Number(req.params.id);
-  const task = tasks.find((item) => item.id === id);
+  const existing = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
 
-  if (!task) {
-    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  if (!existing) {
+    return res.status(404).json({ error: "Task not found" });
   }
 
   const body = req.body || {};
@@ -100,21 +87,23 @@ app.put("/tasks/:id", (req, res) => {
     return res.status(400).json({ error: "done must be a boolean" });
   }
 
-  if ("title" in body) task.title = body.title.trim();
-  if ("done" in body) task.done = body.done;
+  const newTitle = "title" in body ? body.title.trim() : existing.title;
+  const newDone = "done" in body ? (body.done ? 1 : 0) : existing.done;
 
-  return res.status(200).json(task);
+  db.prepare("UPDATE tasks SET title = ?, done = ? WHERE id = ?").run(newTitle, newDone, id);
+  const updated = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
+  return res.status(200).json({ id: updated.id, title: updated.title, done: Boolean(updated.done) });
 });
 
 app.delete("/tasks/:id", (req, res) => {
   const id = Number(req.params.id);
-  const index = tasks.findIndex((item) => item.id === id);
+  const existing = db.prepare("SELECT * FROM tasks WHERE id = ?").get(id);
 
-  if (index === -1) {
-    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  if (!existing) {
+    return res.status(404).json({ error: "Task not found" });
   }
 
-  tasks.splice(index, 1);
+  db.prepare("DELETE FROM tasks WHERE id = ?").run(id);
   return res.status(204).send();
 });
 
